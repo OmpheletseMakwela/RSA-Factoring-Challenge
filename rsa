@@ -1,49 +1,40 @@
-#!/usr/bin/ env bash
+#!/usr/bin/python3
 
 import sys
 
-def gcd(a, b):
-    while b:
-        a, b = b, a % b
-    return a
+def factorize_numbers(filename):
+    """Factorize numbers from a file into a product of two smaller numbers"""
+    try:
+        with open(filename) as file:
+            for line in file:
+                number = int(line.strip())
+                if number < 2:
+                    continue  # Skip numbers less than 2
 
-def pollard_rho(n):
-    if n == 1:
-        return [1]
-    if n % 2 == 0:
-        return [2, n // 2]
-    
-    x = 2
-    y = 2
-    d = 1
-    f = lambda x: (x**2 + 1) % n
-    
-    while d == 1:
-        x = f(x)
-        y = f(f(y))
-        d = gcd(abs(x - y), n)
-    
-    if d == n:
-        return None
-    else:
-        return [d, n // d]
+                if number % 2 == 0:
+                    print(f"{number}={number // 2}*2")
+                else:
+                    divisor = 3
+                    while divisor <= number // 2:
+                        if number % divisor == 0:
+                            print(f"{number}={number // divisor}*{divisor}")
+                            break
+                        divisor += 2  # Check only odd divisors
 
-def factorize_rsa(number):
-    factors = pollard_rho(number)
-    if factors is None:
-        return "Could not factorize"
-    else:
-        return f"{number}={'*'.join(map(str, factors))}"
+                    if divisor > number // 2:
+                        print(f"{number}={number}*1")
+    except FileNotFoundError:
+        print(f"File '{filename}' not found.")
+    except ValueError:
+        print("Invalid input in the file.")
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) != 2:
-        print("Usage: rsa <file>")
+        print("Usage: python script.py <file>")
         sys.exit(1)
 
-    input_file = sys.argv[1]
-    
-    with open(input_file, 'r') as file:
-        number = int(file.readline().strip())
+    filename = sys.argv[1]
+    factorize_numbers(filename)
 
-    result = factorize_rsa(number)
-    print(result)
+if __name__ == "__main__":
+    main()
