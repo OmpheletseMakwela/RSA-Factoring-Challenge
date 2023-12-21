@@ -4,27 +4,33 @@ import Datetime
 
 def factorize(number):
     factors = []
-    for i in range(2, int(number ** 0.5) + 1):
-        while number % i == 0:
-            factors.append(i)
-            number //= i
-    if number > 1:
-        factors.append(number)
+    for i in range(2, number // 2 + 1):
+        if number % i == 0:
+            factors.append((i, number // i))
     return factors
 
-def main(file_path):
-    with open(file_path, 'r') as file:
-        numbers = file.readlines()
-
-    for num in numbers:
-        num = int(num.strip())
-        factors = factorize(num)
-        print(f"{num}={'*'.join(map(str, factors[:2]))}")
-
-if __name__ == "__main__":
+def main():
     if len(sys.argv) != 2:
         print("Usage: factors <file>")
         sys.exit(1)
 
     input_file = sys.argv[1]
-    main(input_file)
+
+    with open(input_file, 'r') as file:
+        numbers = file.read().splitlines()
+
+    start_time = datetime.datetime.now()
+
+    for num in numbers:
+        num = int(num)
+        factor_pairs = factorize(num)
+        if factor_pairs:
+            for pair in factor_pairs:
+                print(f"{num}={pair[0]}*{pair[1]}")
+
+    end_time = datetime.datetime.now()
+    execution_time = end_time - start_time
+    print(f"Execution time: {execution_time}")
+
+if __name__ == "__main__":
+    main()
