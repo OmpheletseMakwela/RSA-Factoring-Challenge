@@ -1,20 +1,15 @@
 #!/usr/bin/python3
 import sys
+from sympy import factorint
 
-def factorize_number(number):
-    """Factorize a number into a product of two smaller numbers"""
-    if number % 2 == 0:
-        print(f"{number}={number // 2}*2")
-        return
-
-    i = 3
-    while i <= number // 2:
-        if number % i == 0:
-            print(f"{number}={number // i}*{i}")
-            return
-        i += 2
-
-    print(f"{number}={number}*1")
+def factorize_rsa(number):
+    factors = factorint(number)
+    prime_factors = sorted(factors.items())
+    output = f"{number}="
+    for factor, power in prime_factors:
+        output += f"{factor}*"
+    output = output.rstrip('*')
+    print(output)
 
 def main():
     if len(sys.argv) != 2:
@@ -27,7 +22,7 @@ def main():
         with open(filename) as file:
             for line in file:
                 number = int(line.strip())
-                factorize_number(number)
+                factorize_rsa(number)
     except FileNotFoundError:
         print(f"File '{filename}' not found.")
     except ValueError:
